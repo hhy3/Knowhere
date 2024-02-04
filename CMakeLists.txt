@@ -23,7 +23,7 @@ include(cmake/utils/utils.cmake)
 knowhere_option(WITH_RAFT "Build with RAFT indexes" OFF)
 if (WITH_RAFT)
   if("${CMAKE_CUDA_ARCHITECTURES}" STREQUAL "")
-    set(supported_archs "70" "75" "80" "86" "89" "90")
+    set(supported_archs "86-real")
 
     if(CMAKE_CUDA_COMPILER_ID STREQUAL "NVIDIA" AND CMAKE_CUDA_COMPILER_VERSION VERSION_LESS 11.1.0)
       list(REMOVE_ITEM supported_archs "86")

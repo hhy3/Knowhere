@@ -99,7 +99,7 @@ if(NOT RAFT_CUTLASS_GIT_TAG)
 endif()
 
 if(NOT RAFT_CUTLASS_GIT_REPOSITORY)
-  set(RAFT_CUTLASS_GIT_REPOSITORY https://github.com/NVIDIA/cutlass.git)
+  set(RAFT_CUTLASS_GIT_REPOSITORY git@github.com:NVIDIA/cutlass.git)
 endif()
 
 find_and_configure_cutlass(

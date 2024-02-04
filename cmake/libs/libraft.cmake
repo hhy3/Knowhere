@@ -42,7 +42,7 @@ function(find_and_configure_raft)
     compiled_static
     CPM_ARGS
     GIT_REPOSITORY
-    https://github.com/${PKG_FORK}/raft.git
+    git@github.com:${PKG_FORK}/raft.git
     GIT_TAG
     ${PKG_PINNED_TAG}
     SOURCE_SUBDIR
