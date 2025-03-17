@@ -24,17 +24,21 @@ namespace knowhere {
 
 void
 ExecOverSearchThreadPool(std::vector<std::function<void()>>& tasks) {
-    auto pool = ThreadPool::GetGlobalSearchThreadPool();
-    std::vector<folly::Future<folly::Unit>> futures;
-    futures.reserve(tasks.size());
-    for (auto&& t : tasks) {
-        futures.emplace_back(pool->push([&t]() {
-            ThreadPool::ScopedSearchOmpSetter setter(1);
-            t();
-        }));
+#pragma omp parallel for schedule(dynamic)
+    for (auto& t : tasks) {
+        t();
     }
-    std::this_thread::yield();
-    WaitAllSuccess(futures);
+    // auto pool = ThreadPool::GetGlobalSearchThreadPool();
+    // std::vector<folly::Future<folly::Unit>> futures;
+    // futures.reserve(tasks.size());
+    // for (auto&& t : tasks) {
+    //     futures.emplace_back(pool->push([&t]() {
+    //         ThreadPool::ScopedSearchOmpSetter setter(1);
+    //         t();
+    //     }));
+    // }
+    // std::this_thread::yield();
+    // WaitAllSuccess(futures);
 }
 
 void
