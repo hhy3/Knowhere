@@ -1559,11 +1559,22 @@ void PQFlashAisaqIndex<T>::aisaq_cached_beam_search(
                     if (frontier_iter == frontier_items.end()) {
                         /* Not in frontier map. Needs to be read */
                         if (aisaq_data.aisaq_scratch_mem_offset.empty()) {
-                        	release_data();
-                            throw ANNException("No free nodes, increase "
-                                               "defaults::MAX_N_SECTOR_READS.",
-                                               -1, __FUNCSIG__, __FILE__,
-                                               __LINE__);
+                            /* All node-read slots are held by read-but-not-
+                             * yet-expanded frontier nodes; this happens when
+                             * beam_width > vectors_beamwidth outruns the
+                             * expansion rate at large search list sizes.
+                             * Skip reading this node for the current hop and
+                             * keep scanning for nodes that already have data
+                             * (in frontier/cache); their expansion recycles
+                             * slots for the next hop. When this node was
+                             * selected to fill the Bv list (bv_count < bv)
+                             * the scan already flagged it as expanded; undo
+                             * that so a later hop offers it again instead of
+                             * silently dropping it. */
+                            if (bv_count < bv) {
+                                retset.unexpand(position);
+                            }
+                            continue;
                         }
                         buf = sector_scratch +
                               aisaq_data.aisaq_scratch_mem_offset.back();

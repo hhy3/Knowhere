@@ -137,6 +137,20 @@ namespace diskann {
             return false;
         }
 
+        /* Undo the expanded flag set by get_first/get_next_unexpanded_position
+         * so the node at `position` is offered again by a later scan. The
+         * cursor must be rewound when it already moved past `position`,
+         * because scans never look at indices below _cur. */
+        void unexpand(size_t position) {
+            if (position >= _size) {
+                return;
+            }
+            _data[position].flag = false;
+            if (position < _cur) {
+                _cur = position;
+            }
+        }
+
         size_t size() const {
             return _size;
         }
